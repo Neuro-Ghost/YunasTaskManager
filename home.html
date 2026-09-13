@@ -11,42 +11,64 @@
   <title>Welcome</title>
   
   <style>
-    /* 4-Digit Indicator Display */
-    .pin-dots {
+    /* 4-Box PIN Layout Matching Screenshots */
+    .pin-boxes {
       display: flex;
       justify-content: center;
-      gap: 16px;
+      gap: 12px;
       margin: 20px 0;
       cursor: pointer;
     }
 
-    .pin-dot {
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      border: 2px solid rgba(255, 255, 255, 0.6);
-      background: transparent;
-      transition: all 0.2s ease;
-    }
-
-    .pin-dot.filled {
+    .pin-box {
+      width: 48px;
+      height: 56px;
       background: #ffffff;
-      border-color: #ffffff;
-      box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+      border: 1.5px solid #dcdcdc;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: 600;
+      color: #333333;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+      position: relative;
+      transition: border 0.15s ease, box-shadow 0.15s ease;
     }
 
-    /* Completely hide the text input while keeping it functional */
+    /* Active Focused Box Style (Double Outline Ring + Blinking Cursor) */
+    .pin-box.focused {
+      border: 2px solid #111111;
+      box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
+    }
+
+    .pin-box.focused::after {
+      content: "";
+      width: 1.5px;
+      height: 24px;
+      background-color: #111111;
+      animation: blink 1s infinite;
+      position: absolute;
+    }
+
+    /* Hide cursor line when box contains a filled digit */
+    .pin-box.filled::after {
+      display: none;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    /* Visually hide original input element while preserving JS functionality */
     #secretMessage {
       position: absolute;
       opacity: 0;
-      pointer-events: auto;
       width: 1px;
       height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      border: 0;
+      pointer-events: auto;
     }
   </style>
 </head>
@@ -61,17 +83,17 @@
 
   <div class="home-container">
     <div class="prompt-container">
-      <h1>4 digits</h1>
+      <h1>Enter the 4-digit access code</h1>
       
-      <!-- Only the 4 Circles are visible -->
-      <div class="pin-dots" id="pinDots" onclick="document.getElementById('secretMessage').focus()">
-        <div class="pin-dot"></div>
-        <div class="pin-dot"></div>
-        <div class="pin-dot"></div>
-        <div class="pin-dot"></div>
+      <!-- 4 Rounded PIN Boxes -->
+      <div class="pin-boxes" id="pinBoxes" onclick="focusInput()">
+        <div class="pin-box" id="box-0"></div>
+        <div class="pin-box" id="box-1"></div>
+        <div class="pin-box" id="box-2"></div>
+        <div class="pin-box" id="box-3"></div>
       </div>
 
-      <!-- Hidden functional input -->
+      <!-- Hidden underlying functional input -->
       <input 
         type="text" 
         id="secretMessage" 
@@ -93,39 +115,56 @@
 
   <script>
     const secretInput = document.getElementById('secretMessage');
-    const dots = document.querySelectorAll('.pin-dot');
+    const boxes = [
+      document.getElementById('box-0'),
+      document.getElementById('box-1'),
+      document.getElementById('box-2'),
+      document.getElementById('box-3')
+    ];
 
-    function updateDots() {
-      const length = secretInput.value.length;
-      dots.forEach((dot, index) => {
-        if (index < length) {
-          dot.classList.add('filled');
+    function focusInput() {
+      secretInput.focus();
+      updateBoxes();
+    }
+
+    function updateBoxes() {
+      const value = secretInput.value;
+      const activeIndex = Math.min(value.length, 3);
+      const isFocused = document.activeElement === secretInput;
+
+      boxes.forEach((box, index) => {
+        // Handle digit display
+        if (index < value.length) {
+          box.textContent = value[index];
+          box.classList.add('filled');
         } else {
-          dot.classList.remove('filled');
+          box.textContent = '';
+          box.classList.remove('filled');
+        }
+
+        // Handle focused box indicator
+        if (isFocused && index === activeIndex) {
+          box.classList.add('focused');
+        } else {
+          box.classList.remove('focused');
         }
       });
     }
 
-    // Filter input strictly for digits (0-9)
+    // Restrict strictly to digits (0-9)
     secretInput.addEventListener('input', () => {
       secretInput.value = secretInput.value.replace(/[^0-9]/g, '');
-
       if (secretInput.value.length > 4) {
         secretInput.value = secretInput.value.slice(0, 4);
       }
-      
-      updateDots();
+      updateBoxes();
     });
 
-    // Block non-digit keys at keydown
-    secretInput.addEventListener('keydown', (e) => {
-      const allowedKeys = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', 'Enter'];
-      if (!allowedKeys.includes(e.key) && !/^[0-9]$/.test(e.key)) {
-        e.preventDefault();
-      }
-    });
+    secretInput.addEventListener('focus', updateBoxes);
+    secretInput.addEventListener('blur', updateBoxes);
 
-    updateDots();
+    // Initial state setup
+    updateBoxes();
   </script>
 
   <!-- External module (moved from inline) -->
