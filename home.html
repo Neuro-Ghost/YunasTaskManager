@@ -11,7 +11,7 @@
   <title>Welcome</title>
   
   <style>
-    /* 4-Digit Indicator Display */
+    /* 4-Digit Indicator Dots Display */
     .pin-dots {
       display: flex;
       justify-content: center;
@@ -33,6 +33,15 @@
       border-color: #ffffff;
       box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
     }
+
+    /* Style for visible input box formatted specifically for 4 PIN digits */
+    #secretMessage {
+      text-align: center;
+      letter-spacing: 12px;
+      font-size: 20px;
+      font-weight: bold;
+      -webkit-text-security: disc; /* Masks characters as dots natively */
+    }
   </style>
 </head>
 <body>
@@ -48,6 +57,7 @@
     <div class="prompt-container">
       <h1>4 digits</h1>
       
+      <!-- 4-Digit Dots Visual Indicator -->
       <div class="pin-dots" id="pinDots">
         <div class="pin-dot"></div>
         <div class="pin-dot"></div>
@@ -55,7 +65,15 @@
         <div class="pin-dot"></div>
       </div>
 
-      <input type="text" id="secretMessage" placeholder="...." maxlength="4" />
+      <input 
+        type="text" 
+        id="secretMessage" 
+        placeholder="...." 
+        maxlength="4" 
+        inputmode="numeric" 
+        pattern="[0-9]*" 
+        autocomplete="off"
+      />
       <button onclick="checkSecret()">Get In!</button>
     </div>
   </div>
@@ -67,6 +85,7 @@
     </video>
   </div>
 
+  <!-- Script enforcing digit-only restrictions and syncing dots -->
   <script>
     const secretInput = document.getElementById('secretMessage');
     const dots = document.querySelectorAll('.pin-dot');
@@ -82,16 +101,30 @@
       });
     }
 
+    // Filter input strictly for digits (0-9)
     secretInput.addEventListener('input', () => {
+      // Remove any non-numeric character
+      secretInput.value = secretInput.value.replace(/[^0-9]/g, '');
+
       if (secretInput.value.length > 4) {
         secretInput.value = secretInput.value.slice(0, 4);
       }
+      
       updateDots();
+    });
+
+    // Block non-digit keys at keydown
+    secretInput.addEventListener('keydown', (e) => {
+      const allowedKeys = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', 'Enter'];
+      if (!allowedKeys.includes(e.key) && !/^[0-9]$/.test(e.key)) {
+        e.preventDefault();
+      }
     });
 
     updateDots();
   </script>
 
+  <!-- External module (moved from inline) -->
   <script type="module" src="js/home.js"></script>
 </body>
 </html>
