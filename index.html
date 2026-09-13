@@ -4,285 +4,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&family=Quicksand:wght@300;400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
 
+    <!-- Stylesheets -->
     <link rel="stylesheet" href="css/styles.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
+    <!-- Favicon -->
     <link rel="icon" type="image/jpg" href="https://i.pinimg.com/564x/e8/df/01/e8df017b8459c3fdc951da06ce0be115.jpg">
 
+    <!-- JS Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
 
     <title>Yuu Got This</title>
-
-    <style>
-      /* Integrated Lock Screen Overlay */
-      #lock-screen-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background: #0d0d11;
-        z-index: 99999;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 20px;
-        transition: opacity 0.4s ease, visibility 0.4s ease;
-      }
-
-      .phone-container {
-        width: 100%;
-        max-width: 360px;
-        height: 720px;
-        background: linear-gradient(180deg, #1f1c2c 0%, #0d0d11 100%);
-        border-radius: 40px;
-        border: 8px solid #2d2d38;
-        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        align-items: center;
-        padding: 24px 20px;
-        position: relative;
-        overflow: hidden;
-      }
-
-      .status-bar {
-        width: 100%;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: 13px;
-        font-weight: 600;
-        color: rgba(255, 255, 255, 0.8);
-        padding: 0 8px;
-      }
-
-      .status-icons span {
-        margin-left: 6px;
-      }
-
-      .pin-header {
-        text-align: center;
-        margin-top: 40px;
-      }
-
-      .pin-header h2 {
-        font-size: 18px;
-        font-weight: 500;
-        letter-spacing: 0.5px;
-        margin-bottom: 8px;
-        color: #ffffff;
-      }
-
-      .pin-header p {
-        font-size: 13px;
-        color: #a0a0b0;
-        height: 18px;
-        transition: color 0.2s ease;
-      }
-
-      .pin-header p.error {
-        color: #ff5252;
-        animation: shake 0.3s ease-in-out;
-      }
-
-      .pin-header p.success {
-        color: #4caf50;
-      }
-
-      .pin-dots {
-        display: flex;
-        justify-content: center;
-        gap: 20px;
-        margin-top: 30px;
-      }
-
-      .dot {
-        width: 14px;
-        height: 14px;
-        border-radius: 50%;
-        border: 2px solid rgba(255, 255, 255, 0.4);
-        background: transparent;
-        transition: all 0.15s ease;
-      }
-
-      .dot.filled {
-        background: #ffffff;
-        border-color: #ffffff;
-        box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-      }
-
-      .pin-dots.shake {
-        animation: shake 0.3s ease-in-out;
-      }
-
-      @keyframes shake {
-        0%, 100% { transform: translateX(0); }
-        20% { transform: translateX(-10px); }
-        40% { transform: translateX(10px); }
-        60% { transform: translateX(-6px); }
-        80% { transform: translateX(6px); }
-      }
-
-      .keypad {
-        width: 100%;
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 16px;
-        justify-items: center;
-        margin-bottom: 30px;
-      }
-
-      .key {
-        width: 68px;
-        height: 68px;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.08);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        color: #fff;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        cursor: pointer;
-        transition: background 0.15s ease, transform 0.1s ease;
-        outline: none;
-        -webkit-tap-highlight-color: transparent;
-      }
-
-      .key:active {
-        background: rgba(255, 255, 255, 0.3);
-        transform: scale(0.95);
-      }
-
-      .key-number {
-        font-size: 24px;
-        font-weight: 400;
-        line-height: 1;
-      }
-
-      .key-sub {
-        font-size: 9px;
-        font-weight: 600;
-        letter-spacing: 2px;
-        color: rgba(255, 255, 255, 0.5);
-        margin-top: 3px;
-      }
-
-      .key-action {
-        background: transparent;
-        border: none;
-        font-size: 14px;
-        font-weight: 500;
-        color: rgba(255, 255, 255, 0.7);
-      }
-
-      .key-action:active {
-        background: transparent;
-        color: #fff;
-      }
-
-      .key-empty {
-        visibility: hidden;
-        pointer-events: none;
-      }
-    </style>
 </head>
 <body>
-
-    <div id="lock-screen-overlay">
-      <div class="phone-container">
-        <div class="status-bar">
-          <span>9:41</span>
-          <div class="status-icons">
-            <span>📶</span>
-            <span>📡</span>
-            <span>🔋</span>
-          </div>
-        </div>
-
-        <div class="pin-header">
-          <h2>Enter Passcode</h2>
-          <p id="status-text">Enter your 4-digit PIN</p>
-          
-          <div class="pin-dots" id="pin-dots">
-            <div class="dot"></div>
-            <div class="dot"></div>
-            <div class="dot"></div>
-            <div class="dot"></div>
-          </div>
-        </div>
-
-        <div class="keypad">
-          <button class="key" onclick="pressKey('1')">
-            <span class="key-number">1</span>
-            <span class="key-sub">&nbsp;</span>
-          </button>
-          <button class="key" onclick="pressKey('2')">
-            <span class="key-number">2</span>
-            <span class="key-sub">ABC</span>
-          </button>
-          <button class="key" onclick="pressKey('3')">
-            <span class="key-number">3</span>
-            <span class="key-sub">DEF</span>
-          </button>
-
-          <button class="key" onclick="pressKey('4')">
-            <span class="key-number">4</span>
-            <span class="key-sub">GHI</span>
-          </button>
-          <button class="key" onclick="pressKey('5')">
-            <span class="key-number">5</span>
-            <span class="key-sub">JKL</span>
-          </button>
-          <button class="key" onclick="pressKey('6')">
-            <span class="key-number">6</span>
-            <span class="key-sub">MNO</span>
-          </button>
-
-          <button class="key" onclick="pressKey('7')">
-            <span class="key-number">7</span>
-            <span class="key-sub">PQRS</span>
-          </button>
-          <button class="key" onclick="pressKey('8')">
-            <span class="key-number">8</span>
-            <span class="key-sub">TUV</span>
-          </button>
-          <button class="key" onclick="pressKey('9')">
-            <span class="key-number">9</span>
-            <span class="key-sub">WXYZ</span>
-          </button>
-
-          <div class="key key-empty"></div>
-          <button class="key" onclick="pressKey('0')">
-            <span class="key-number">0</span>
-          </button>
-          <button class="key key-action" onclick="deleteDigit()">Delete</button>
-        </div>
-      </div>
-    </div>
-
+    <!-- Background Audio -->
     <audio id="bg-audio" loop>
         <source src="assets//lofi music for relaxation 1 minute to drift off relax and chill.mp3" type="audio/mpeg">
     </audio>
 
+    <!-- Loading Overlay -->
     <div id="loading-overlay">
         <div class="loader">
             <img src="cat-funny-stupid-loading-reloading-frozen.gif" alt="Loading...">
         </div>
     </div>
 
+    <!-- Animated Title -->
     <div id="animated-title">
         <span id="typing-text"></span><span class="blinking-cursor">|</span>
     </div>
 
+    <!-- Main Container -->
     <div class="container">
 
+        <!-- Tabs -->
         <div class="tabs">
             <button class="tab-button" id="monday-btn" data-day="monday">Monday</button>
             <button class="tab-button" id="tuesday-btn" data-day="tuesday">Tuesday</button>
@@ -291,6 +51,7 @@
             <button class="tab-button" id="friday-btn" data-day="friday">Friday</button>
         </div>
 
+        <!-- Task Lists -->
         <div class="task-list" id="monday-tasks">
             <h2>Monday Tasks</h2>
             <ul id="monday-task-list"></ul>
@@ -331,6 +92,7 @@
             <button class="clear-tasks-btn" data-day="friday">Clear Tasks</button>
         </div>
 
+        <!-- Music Player -->
         <div id="music-player">
             <h2 id="now-playing"><span id="current-song">None</span></h2>
             <div id="progress-container">
@@ -349,10 +111,12 @@
 
     </div>
 
+    <!-- Footer -->
     <div class="footer">
         <p>made with care, a.toxy</p>
     </div>
 
+    <!-- Background Video -->
     <div class="video-container">
         <video id="background-video" autoplay muted loop class="background-video" preload="auto">
             <source src="assets/newBG.mp4" type="video/mp4">
@@ -360,90 +124,10 @@
         </video>
     </div>
 
+    <!-- Mute Button -->
     <button id="mute-btn" aria-pressed="false" title="Toggle rain"></button>
 
-    <script>
-      const CORRECT_PIN = "1234"; // Default passcode
-      let currentInput = "";
-
-      const lockOverlay = document.getElementById('lock-screen-overlay');
-      const dots = document.querySelectorAll('.dot');
-      const statusText = document.getElementById('status-text');
-      const dotsContainer = document.getElementById('pin-dots');
-
-      function pressKey(num) {
-        if (!lockOverlay || lockOverlay.style.display === 'none') return;
-        if (currentInput.length < 4) {
-          currentInput += num;
-          updateDisplay();
-
-          if (currentInput.length === 4) {
-            setTimeout(verifyPIN, 100);
-          }
-        }
-      }
-
-      function deleteDigit() {
-        if (!lockOverlay || lockOverlay.style.display === 'none') return;
-        if (currentInput.length > 0) {
-          currentInput = currentInput.slice(0, -1);
-          resetStatusText();
-          updateDisplay();
-        }
-      }
-
-      function updateDisplay() {
-        dots.forEach((dot, index) => {
-          if (index < currentInput.length) {
-            dot.classList.add('filled');
-          } else {
-            dot.classList.remove('filled');
-          }
-        });
-      }
-
-      function verifyPIN() {
-        if (currentInput === CORRECT_PIN) {
-          statusText.textContent = "Passcode Correct";
-          statusText.className = "success";
-          setTimeout(() => {
-            lockOverlay.style.opacity = '0';
-            setTimeout(() => {
-              lockOverlay.style.display = 'none';
-            }, 400);
-          }, 300);
-        } else {
-          statusText.textContent = "Incorrect Passcode";
-          statusText.className = "error";
-          dotsContainer.classList.add('shake');
-
-          setTimeout(() => {
-            dotsContainer.classList.remove('shake');
-            resetPIN();
-          }, 400);
-        }
-      }
-
-      function resetPIN() {
-        currentInput = "";
-        updateDisplay();
-      }
-
-      function resetStatusText() {
-        statusText.textContent = "Enter your 4-digit PIN";
-        statusText.className = "";
-      }
-
-      document.addEventListener('keydown', (e) => {
-        if (!lockOverlay || lockOverlay.style.display === 'none') return;
-        if (e.key >= '0' && e.key <= '9') {
-          pressKey(e.key);
-        } else if (e.key === 'Backspace') {
-          deleteDigit();
-        }
-      });
-    </script>
-
+    <!-- Scripts -->
     <script type="module" src="js/firebase.js"></script>
     <script type="module" src="js/script.js"></script>
 </body>
