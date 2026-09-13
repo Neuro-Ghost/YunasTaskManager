@@ -9,6 +9,31 @@
   <link rel="stylesheet" href="css/homeStyle.css">
   <link rel="icon" type="image/jpg" href="https://i.pinimg.com/564x/e8/df/01/e8df017b8459c3fdc951da06ce0be115.jpg">
   <title>Welcome</title>
+  
+  <style>
+    /* 4-Digit Indicator Display */
+    .pin-dots {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin: 15px 0;
+    }
+
+    .pin-dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.6);
+      background: transparent;
+      transition: all 0.2s ease;
+    }
+
+    .pin-dot.filled {
+      background: #ffffff;
+      border-color: #ffffff;
+      box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+    }
+  </style>
 </head>
 <body>
   <audio id="bg-audio" autoplay loop>
@@ -22,7 +47,15 @@
   <div class="home-container">
     <div class="prompt-container">
       <h1>4 digits</h1>
-      <input type="text" id="secretMessage" placeholder="...." />
+      
+      <div class="pin-dots" id="pinDots">
+        <div class="pin-dot"></div>
+        <div class="pin-dot"></div>
+        <div class="pin-dot"></div>
+        <div class="pin-dot"></div>
+      </div>
+
+      <input type="text" id="secretMessage" placeholder="...." maxlength="4" />
       <button onclick="checkSecret()">Get In!</button>
     </div>
   </div>
@@ -34,7 +67,31 @@
     </video>
   </div>
 
-  <!-- External module (moved from inline) -->
+  <script>
+    const secretInput = document.getElementById('secretMessage');
+    const dots = document.querySelectorAll('.pin-dot');
+
+    function updateDots() {
+      const length = secretInput.value.length;
+      dots.forEach((dot, index) => {
+        if (index < length) {
+          dot.classList.add('filled');
+        } else {
+          dot.classList.remove('filled');
+        }
+      });
+    }
+
+    secretInput.addEventListener('input', () => {
+      if (secretInput.value.length > 4) {
+        secretInput.value = secretInput.value.slice(0, 4);
+      }
+      updateDots();
+    });
+
+    updateDots();
+  </script>
+
   <script type="module" src="js/home.js"></script>
 </body>
 </html>
